@@ -13,6 +13,23 @@ DELTA = {
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+def show_game_over(screen: pg.Surface, kk_rct: pg.Rect) -> None:
+    """
+    ゲームオーバー画面を表示して2秒待って終了する関数
+    """
+    kk_img = pg.image.load("fig/8.png")
+    bg_img = pg.image.load("fig/pg_bg.jpg")
+    screen.blit(bg_img, [0, 0])
+    screen.blit(kk_img, kk_rct)
+    
+
+    font = pg.font.Font(None, 100)
+    text = font.render("Game Over", True, (255, 0, 0))
+    text_rect = text.get_rect(center=(WIDTH//2, HEIGHT//2))
+    screen.blit(text, text_rect)
+
+    pg.display.update()
+    pg.time.wait(2000)
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -63,9 +80,14 @@ def main():
             vx *= -1
         if not tate : #縦方向にはみ出ていたら
             vy *= -1
+            
         pg.display.update()
         tmr += 1
         clock.tick(50)
+
+        if kk_rct.colliderect(bb_rct):
+            show_game_over(screen, kk_rct)
+            return
 
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
