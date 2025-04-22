@@ -37,19 +37,28 @@ def main():
                 return
         screen.blit(bg_img, [0, 0]) 
 
+            #こうかとんRectと爆弾Rectが重なっていたら
+        if kk_rct.colliderect(bb_rct):
+            print("Game Over")
+            return    
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
+
         for key, mv in DELTA.items():
             if key_lst[key]:
                 sum_mv[0] += mv[0] #左右方向
                 sum_mv[1] += mv[1] #上下方向
         kk_rct.move_ip(sum_mv)
+
         if check_bound(kk_rct) != (True, True): #画面外だったら
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) #画面内に戻す
         screen.blit(kk_img, kk_rct)
+
         bb_rct.move_ip(vx, vy) #爆弾の移動
         yoko, tate = check_bound(bb_rct)
-        screen.blit(bb_img, bb_rct)
+        screen.blit(bb_img, bb_rct) #爆弾の描画
+
         if not yoko : #左右どちらかにはみ出ていたら
             vx *= -1
         if not tate : #縦方向にはみ出ていたら
