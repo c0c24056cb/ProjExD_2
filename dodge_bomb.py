@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -15,21 +16,31 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def show_game_over(screen: pg.Surface, kk_rct: pg.Rect) -> None:
     """
-    ゲームオーバー画面を表示して2秒待って終了する関数
+    ゲームオーバー画面を表示し、5秒間停止する関数
+    背景を黒く半透明で覆う
+    泣いているこうかとんを表示
+    Game Over 文字を中央に表示
     """
-    kk_img = pg.image.load("fig/8.png")
-    bg_img = pg.image.load("fig/pg_bg.jpg")
-    screen.blit(bg_img, [0, 0])
-    screen.blit(kk_img, kk_rct)
+    blackout = pg.Surface((WIDTH, HEIGHT))
+    blackout.set_alpha(150)
+    blackout.fill((0, 0, 0))
+    screen.blit(blackout, (0, 0))
+
+    sad_img = pg.image.load("fig/8.png")
+    sad_img = pg.transform.rotozoom(sad_img, 0, 0.9)
+    sad_rct1 = sad_img.get_rect(center=(WIDTH // 2 + 220, HEIGHT // 2))
+    sad_rct2 = sad_img.get_rect(center=(WIDTH // 2 - 220, HEIGHT // 2))
+    screen.blit(sad_img, sad_rct1)
+    screen.blit(sad_img, sad_rct2)
     
 
     font = pg.font.Font(None, 100)
-    text = font.render("Game Over", True, (255, 0, 0))
+    text = font.render("Game Over", True, (255, 255, 255))
     text_rect = text.get_rect(center=(WIDTH//2, HEIGHT//2))
     screen.blit(text, text_rect)
 
     pg.display.update()
-    pg.time.wait(2000)
+    time.sleep(5)
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -88,6 +99,14 @@ def main():
         if kk_rct.colliderect(bb_rct):
             show_game_over(screen, kk_rct)
             return
+        
+        scale = 1 + tmr / 500
+        new_size = int(20 * scale)
+        bb_img = pg.transform.scale(bb_img, (new_size, new_size))
+        bb_rct = bb_img.get_rect(center=bb_rct.center)
+
+        vx *= 1 + 0.001
+        vy *= 1 + 0.001
 
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
