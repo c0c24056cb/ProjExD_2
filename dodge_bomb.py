@@ -33,7 +33,6 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
 
-
     # 爆弾画像と加速度のリスト作成
     bb_accs = [a for a in range(1, 11)]
     bb_imgs = []
@@ -51,7 +50,6 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
 
-    
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
