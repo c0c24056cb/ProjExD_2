@@ -22,6 +22,18 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
 
+        # こうかとん画像の方向別読み込み
+    kk_imgs = {
+        (0, -5): pg.transform.rotozoom(pg.image.load("fig/3.png"), 90, 0.9),
+        (0, +5): pg.transform.rotozoom(pg.image.load("fig/3.png"), -90, 0.9),
+        (+5, 0): pg.transform.rotozoom(pg.image.load("fig/3.png"), 180, 0.9),
+        (-5, 0): pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9),
+    }
+    kk_img = kk_imgs[(+5, 0)]  # 初期向き：右
+    kk_rct = kk_img.get_rect()
+    kk_rct.center = 300, 200
+
+
     # 爆弾画像と加速度のリスト作成
     bb_accs = [a for a in range(1, 11)]
     bb_imgs = []
@@ -39,6 +51,7 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
 
+    
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -76,6 +89,11 @@ def main():
             vx *= -1
         if not tate:
             vy *= -1
+
+        for key in reversed(DELTA):
+            if key_lst[key]:
+                kk_img = kk_imgs[DELTA[key]]
+                break
 
         screen.blit(bb_img, bb_rct)
         pg.display.update()
