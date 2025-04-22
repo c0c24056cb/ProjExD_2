@@ -28,7 +28,7 @@ def main():
     bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
     bb_img.set_colorkey((0, 0, 0))
     vx, vy = +5, +5
-
+    
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -44,12 +44,32 @@ def main():
                 sum_mv[0] += mv[0] #左右方向
                 sum_mv[1] += mv[1] #上下方向
         kk_rct.move_ip(sum_mv)
+        if check_bound(kk_rct) != (True, True): #画面外だったら
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) #画面内に戻す
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)
+        bb_rct.move_ip(vx, vy) #爆弾の移動
+        yoko, tate = check_bound(bb_rct)
         screen.blit(bb_img, bb_rct)
+        if not yoko : #左右どちらかにはみ出ていたら
+            vx *= -1
+        if not tate : #縦方向にはみ出ていたら
+            vy *= -1
         pg.display.update()
         tmr += 1
         clock.tick(50)
+
+def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
+    """
+    引数 : こうかとんRectか爆弾Rect
+    戻り値 : タプル(横方向判定結果、縦方向判定結果)
+    画面内ならTrue、画面外ならFalse
+    """
+    yoko, tate = True, True
+    if obj_rct.left < 0 or WIDTH < obj_rct.right: #横方向判定
+        yoko = False
+    if obj_rct.top < 0 or HEIGHT < obj_rct.bottom: #縦方向判定
+        tate = False
+    return yoko, tate
 
 
 if __name__ == "__main__":
